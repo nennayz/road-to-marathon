@@ -552,7 +552,7 @@ function confettiBurst(){
 }
 function dashRunner(){const r=document.getElementById('runnerfx');if(!r)return;r.classList.remove('go');void r.offsetWidth;r.classList.add('go');}
 function countUp(id,target,dec,comma){const el=document.getElementById(id);if(!el)return;const rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;const fmt=v=>{let n=dec?(+v).toFixed(dec):Math.round(v);return comma?(+n).toLocaleString(undefined,{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0}):n;};if(rm){el.textContent=fmt(target);return;}const dur=900,t0=performance.now();function step(t){let p=Math.min(1,(t-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=fmt(target*p);if(p<1)requestAnimationFrame(step);else el.textContent=fmt(target);}requestAnimationFrame(step);}
-function onReady(){const rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!rm){confettiBurst();dashRunner();}try{if(localStorage.getItem('nayz_music')==='1'){const b=document.getElementById('btnMusic');if(b){b.textContent='🔇';}}}catch(e){} if(window.cowork)loadGallery();}
+function onReady(){const rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!rm){confettiBurst();dashRunner();}try{if(localStorage.getItem('nayz_music')==='1'){const b=document.getElementById('btnMusic');if(b){b.textContent='🔇';}}}catch(e){}}
 
 // ===== FEATURE BUILDERS =====
 function fmtHMS(sec){sec=Math.round(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h+':'+String(m).padStart(2,'0');}
@@ -590,17 +590,6 @@ function buildMilestones(runs){
   return `<h2><span class="dot"></span>Distance Milestones · ระยะไกลสุดที่พิชิต</h2>
     <div style="font-size:13px;color:var(--dim);margin-bottom:2px">ไกลสุดตอนนี้: <b style="color:var(--cyan)">${longest.toFixed(2)} km</b> → เป้า Full Marathon 42.195 km</div>
     <div class="msbar"><div class="msfill" style="width:${Math.min(100,longest/maxd*100)}%"></div>${nodes}</div>`;
-}
-function galleryCardHTML(){return `<h2><span class="dot"></span>📸 Progress Gallery · ภาพผลซ้อมจาก Drive</h2><div class="galgrid" id="galgrid"><div style="grid-column:1/-1;color:var(--dim);font-size:12px">${window.cowork?'⏳ กำลังโหลดรูปจาก Google Drive…':'เปิดใน Cowork เพื่อโหลดรูปผลซ้อมสดจาก Drive (เวอร์ชันมือถือไม่แสดงกลุ่มรูปนี้เพื่อให้ไฟล์เล็ก)'}</div></div>`;}
-async function loadGallery(){
-  if(!window.cowork)return;
-  try{
-    const res=await callTool(T_SEARCH,{query:"parentId = '"+RUN_LOGS_FOLDER+"' and mimeType = 'image/png'",pageSize:30});
-    const files=((res&&res.files)||[]).slice(0,9);const cont=document.getElementById('galgrid');if(!cont)return;
-    if(!files.length){cont.innerHTML='<div style="grid-column:1/-1;color:var(--dim);font-size:12px">ยังไม่มีรูปผลซ้อม</div>';return;}
-    let html='';for(const fl of files){try{const dl=await callTool(T_DOWNLOAD,{fileId:fl.id});if(dl&&dl.content)html+=`<img src="data:image/png;base64,${dl.content}" alt="${fl.title}" loading="lazy">`;}catch(e){}}
-    cont.innerHTML=html||'<div style="grid-column:1/-1;color:var(--dim);font-size:12px">โหลดรูปไม่สำเร็จ</div>';
-  }catch(e){}
 }
 
 function render(runs,fromSnapshot){
@@ -697,9 +686,6 @@ function render(runs,fromSnapshot){
     <div class="fvsingle"><img src="${IMG_FINISH}" alt="REVEL Mt Charleston finish line"></div>
     <div class="fvcap"><b>"I do not chase the finish line. I rise into it."</b> — #NayzMiles · REVEL Mt Charleston 2027</div>`;
   grid.appendChild(fv);
-
-  // ----- PROGRESS GALLERY -----
-  const glc=document.createElement('div');glc.className='card';glc.style.gridColumn='1/-1';glc.innerHTML=galleryCardHTML();grid.appendChild(glc);
 
   // ----- RACE INTEL -----
   const ric=document.createElement('div');ric.className='card';ric.style.gridColumn='1/-1';
