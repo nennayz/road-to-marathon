@@ -152,6 +152,57 @@ details[open] summary::before{content:"▾ "}
 .fvwrap img{width:100%;height:100%;object-fit:cover;border-radius:12px;border:1px solid rgba(245,196,81,.25)}
 .fvcap{margin-top:10px;text-align:center;font-style:italic;color:#f3d8b0;font-size:13px}
 .fvcap b{color:var(--gold)}
+
+.fvsingle img{max-width:420px;width:100%;display:block;margin:0 auto;border-radius:12px;border:1px solid rgba(245,196,81,.3)}
+.wtabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.wtab{border:1px solid var(--line);background:#0b1122;color:var(--dim);border-radius:10px;padding:7px 15px;font-size:12px;font-weight:800;cursor:pointer}
+.wtab.on{background:linear-gradient(90deg,var(--cyan),var(--violet));color:#1a0e06;border-color:transparent}
+.wpanel{display:none}.wpanel.on{display:block}
+.coachbox{display:flex;gap:10px;background:linear-gradient(135deg,#2a1c14,#1c1410);border:1px solid rgba(245,196,81,.3);border-radius:12px;padding:12px 14px;margin:4px 0 12px}
+.coachbox .ic{font-size:20px;flex:0 0 auto}
+.coachbox .ct{font-size:12.5px;font-style:italic;color:#f3d8b0;line-height:1.7}
+.coachbox .ct b{color:var(--gold);font-style:normal}
+.wday{border-bottom:1px solid #1a2138}
+.wday summary{display:flex;align-items:center;gap:9px;padding:10px 2px;cursor:pointer;list-style:none}
+.wday summary::-webkit-details-marker{display:none}
+.wday summary::before{content:""}
+.wday .dlabel{min-width:40px;font-weight:800;font-size:12px;color:var(--txt)}
+.wpill{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:800;letter-spacing:.3px}
+.t-run{background:rgba(242,129,47,.18);color:var(--cyan)}
+.t-strength{background:rgba(55,179,164,.18);color:var(--lime)}
+.t-walk{background:rgba(224,106,58,.2);color:var(--violet)}
+.t-rest{background:#222a44;color:var(--dim)}
+.wday .wt{font-size:13px;font-weight:600}
+.wdetail{font-size:12px;color:#cdd6f4;padding:2px 0 12px 50px;line-height:1.8}
+.wdetail .row span{color:var(--dim)}
+.wfocus{border-left:3px solid var(--mag);padding-left:9px;font-style:italic;color:#f0dcc0;margin-top:6px}
+.calhead{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:2px}
+.calhead div{text-align:center;font-size:10px;color:var(--dim);font-weight:800}
+.calrow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cell{aspect-ratio:1;border:1px solid var(--line);border-radius:10px;padding:3px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:#0b1122;transition:.15s;position:relative}
+.cell:hover{border-color:var(--cyan);transform:translateY(-1px)}
+.cell.run{background:rgba(242,129,47,.15)}
+.cell.strength{background:rgba(55,179,164,.14)}
+.cell.walk{background:rgba(224,106,58,.15)}
+.cell.rest{background:#141a30}
+.cell .dnum{font-size:11px;font-weight:800}
+.cell .demo{font-size:17px;line-height:1}
+.cell.today{outline:2px solid var(--gold);outline-offset:1px}
+.cell .chk{position:absolute;top:1px;right:4px;font-size:9px;color:var(--lime);font-weight:900}
+.callegend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--dim);margin-top:10px}
+.caldetail{margin-top:10px;background:#0b1122;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.7}
+.medalgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:680px){.medalgrid{grid-template-columns:repeat(2,1fr)}}
+.medal{text-align:center;opacity:.42;filter:grayscale(.85);transition:.35s}
+.medal.un{opacity:1;filter:none}
+.medalwrap{position:relative;height:80px;margin-bottom:4px}
+.ribs::before,.ribs::after{content:"";position:absolute;top:2px;left:50%;width:13px;height:34px;z-index:0;background:linear-gradient(180deg,#e0552c,#a8331a)}
+.ribs::before{transform:translateX(-13px) rotate(13deg)}
+.ribs::after{transform:translateX(0) rotate(-13deg)}
+.disc{position:absolute;left:50%;top:18px;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:26px;z-index:1;background:radial-gradient(circle at 36% 30%,#3a3f55,#262a3d 55%,#1a1d2c);border:3px solid #3c4258;box-shadow:inset 0 -5px 9px rgba(0,0,0,.4)}
+.medal.un .disc{background:radial-gradient(circle at 36% 30%,#ffe9a8,#f5b942 48%,#b8801f);border:3px solid #ffd874;box-shadow:0 0 0 3px rgba(245,196,81,.22),0 8px 20px -6px rgba(245,160,40,.5),inset 0 -5px 9px rgba(120,70,0,.35)}
+.medal .nm{font-size:11px;font-weight:800}
+.medal .ds{font-size:9px;color:var(--dim);margin-top:1px}
 .foot{text-align:center;color:var(--dim);font-size:11px;margin-top:22px}
 .loading{grid-column:1/-1;text-align:center;color:var(--dim);padding:30px;font-size:14px}
 .err{grid-column:1/-1;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.3);color:#ffd5e8;border-radius:12px;padding:12px 14px;font-size:12px}
@@ -197,18 +248,30 @@ const RACES = [
 const PROGRAM_START = '2026-06-22';
 
 // Embedded coach program (Weeks 1–2 from Drive Coach Program)
-const PROGRAM = {
- 1:{goal:'สร้างวินัย · Build Aerobic Base',
-   Mon:{t:'Easy Foundation Run',m:'วิ่ง Easy 20 นาที (เหนื่อย 3–4/10)',time:30,f:'ไม่ต้องเร็ว ไม่ต้องพิสูจน์ ขอแค่จบแบบรู้สึกว่า "เราทำได้"',type:'run'},
-   Wed:{t:'Easy Run-Walk Control',m:'วิ่ง 8 นาที / เดิน 2 นาที × 3 รอบ',time:40,f:'ฝึกคุมตัวเอง อย่าเร่งตอนรู้สึกดี จบแบบยังสนุก',type:'run'},
-   Fri:{t:'Long Easy Run-Walk',m:'วิ่ง 10 นาที / เดิน 2 นาที × 3 รอบ',time:41,f:'วันสร้างฐานหัวใจ จบแบบ Strong จบแบบพรุ่งนี้ไม่พัง',type:'run'},
-   opt:{t:'Home Strength',m:'Squat · Glute Bridge · Calf Raise · Dead Bug · Side Plank',time:20,f:'ทำช้า คุมฟอร์ม เตรียมร่างให้พร้อมวิ่ง',type:'strength'}},
- 2:{goal:'วิ่งนิ่งขึ้น · สร้างความมั่นใจ',
-   Mon:{t:'Easy Continuous Run',m:'วิ่ง Easy 25 นาทีต่อเนื่อง',time:35,f:'เพิ่มเวลานิดหน่อย แต่ยังสบาย วิ่งแบบที่ยังอยากกลับมาซ้อม',type:'run'},
-   Wed:{t:'Easy Progression Control',m:'วิ่ง 10/เดิน 2 ×2 แล้ววิ่งต่อ 8 นาที',time:42,f:'วิ่งให้ smooth ไม่กระชาก ช่วงท้าย "ยังพอไปต่อได้"',type:'run'},
-   Fri:{t:'Long Easy Run-Walk',m:'วิ่ง 12 นาที / เดิน 2 นาที × 3 รอบ',time:47,f:'Long Easy Day สร้าง endurance แบบปลอดภัย จบแบบนิ่ง',type:'run'},
-   opt:{t:'Recovery Walk / Strength',m:'เดินสบาย 25–40 นาที หรือ Home Strength',time:40,f:'พาร่างกายไปขยับ ช่วย recovery ไม่ใช่ซ้อมเอาเหนื่อย',type:'strength'}}
-};
+const PROGRAM_WEEKS=[
+ {n:1,start:'2026-06-22',goal:'สร้างวินัย · Build Aerobic Base',
+  coach:'This first week is not about speed. It is about your new identity. We are not trying to prove that you are fast — we are proving that you can show up. Three runs. Easy effort. No ego. No rush. This is how the marathon dream begins.',
+  days:{
+   Mon:{type:'run',title:'Easy Foundation Run',time:30,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 20 นาที (เหนื่อย 3–4/10)',cool:'เดินช้า 5 นาที',focus:'ไม่ต้องเร็ว ไม่ต้องพิสูจน์ ขอแค่จบแบบรู้สึกว่า "เราทำได้"'},
+   Tue:{type:'strength',title:'Home Strength (optional)',time:20,main:'Squat to Chair · Glute Bridge · Calf Raise · Dead Bug · Side Plank',focus:'ทำช้า คุมฟอร์ม ไม่ต้องหนัก เตรียมร่างให้พร้อมวิ่ง'},
+   Wed:{type:'run',title:'Easy Run-Walk Control',time:40,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 8 นาที / เดิน 2 นาที × 3 รอบ',cool:'เดินช้า 5 นาที',focus:'ฝึกคุมตัวเอง อย่าเร่งตอนรู้สึกดี จบแบบยังสนุก'},
+   Thu:{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:'การพักฟื้นสำคัญเท่าการซ้อม นอนให้พอ ยืดกล้ามเนื้อเบาๆ'},
+   Fri:{type:'run',title:'Long Easy Run-Walk',time:41,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 10 นาที / เดิน 2 นาที × 3 รอบ',cool:'เดินช้า 5 นาที',focus:'วันสร้างฐานหัวใจ จบแบบ Strong จบแบบพรุ่งนี้ไม่พัง'},
+   Sat:{type:'strength',title:'Home Strength (optional)',time:20,main:'Squat to Chair · Glute Bridge · Calf Raise · Dead Bug · Side Plank',focus:'เลือกทำวันอังคารหรือเสาร์ ทำเฉพาะวันที่ร่างกายสดชื่น'},
+   Sun:{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:'พักเต็มที่ เตรียมพร้อมสำหรับสัปดาห์ถัดไป'}
+  }},
+ {n:2,start:'2026-06-29',goal:'วิ่งนิ่งขึ้น · สร้างความมั่นใจ',
+  coach:"Nayz, the goal is not to become a marathoner in one week. The goal is to become someone who keeps showing up. Every easy run is a small vote for your new identity. Every walk break is part of the plan. One day, the marathon will look back at these small Mondays, Wednesdays, and Fridays… and quietly say, 'This is where it began. Go Hao Lui Tor!'",
+  days:{
+   Mon:{type:'run',title:'Easy Continuous Run',time:35,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 25 นาทีต่อเนื่อง',cool:'เดินช้า 5 นาที',focus:'เพิ่มเวลานิดหน่อย แต่ยังสบาย วิ่งแบบที่ยังอยากกลับมาซ้อมวันพุธ'},
+   Tue:{type:'walk',title:'Recovery Walk (optional)',time:40,main:'เดินสบาย หายใจนิ่ง 25–40 นาที',focus:'พาร่างกายไปขยับ ช่วยเลือดไหลเวียน ไม่ใช่ซ้อมเอาเหนื่อย'},
+   Wed:{type:'run',title:'Easy Progression Control',time:42,warm:'เดินเร็ว 5 นาที',main:'วิ่ง 10/เดิน 2, วิ่ง 10/เดิน 2, แล้ววิ่งต่อ 8 นาที',cool:'เดินช้า 5 นาที',focus:'วิ่งให้ smooth ไม่กระชาก ช่วงท้ายควรรู้สึก "ยังพอไปต่อได้"'},
+   Thu:{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:'พักเต็มที่ ยืด Hamstring และก้นเยอะๆ สัปดาห์นี้'},
+   Fri:{type:'run',title:'Long Easy Run-Walk',time:47,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 12 นาที / เดิน 2 นาที × 3 รอบ',cool:'เดินช้า 5 นาที',focus:'Long Easy Day สร้าง endurance แบบปลอดภัย จบแบบนิ่ง "เรากำลังเป็นนักวิ่งจริงๆ แล้ว"'},
+   Sat:{type:'strength',title:'Home Strength (optional)',time:20,main:'Squat · Glute Bridge · Calf Raise · Dead Bug · Single-leg Balance',focus:'Strong legs first. Fast legs later. ทำเบา ทำช้า ทำให้ครบ'},
+   Sun:{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:'พักเต็มที่ เตรียมพร้อมสำหรับเฟสถัดไป'}
+  }}
+];
 const MONTHS={January:0,February:1,March:2,April:3,May:4,June:5,July:6,August:7,September:8,October:9,November:10,December:11};
 const MILY_LINES=[
  'พี่มาถูกทางแล้วค่ะ ทุกก้าวเล็กๆ คือ vote ให้ตัวตนนักวิ่งคนใหม่ของพี่ 💪',
@@ -232,7 +295,8 @@ const RACE_INTEL=[
 const DRILLS={note:'2 รอบ · ~20 ม./ท่า · 10–15 นาทีก่อนซ้อม · ที่มา: Ari Running EP.3',
  list:[['Low Knee','วิ่งเข่าต่ำ ลงเท้าไว แกว่งแขนสัมพันธ์กับขา'],['High Knee','ยกเข่าสูงระดับสะโพก หลังตรง ลงเด็ดขาด'],['Butt Kick','พับส้นแตะก้น ลำตัวตั้งตรง ไม่เอนหลัง'],['Straight Leg Bound','ขาตึง เตะไปข้างหน้า ลงกลางเท้า'],['Skip A','สคิป ยกเข่า+ล็อกปลายเท้า ยก→ตบลงพื้น'],['Skip B','สคิป B เหยียดขาไปด้านหน้าก่อนตบลง'],['Stride','วิ่งเร็วด้วยฟอร์มถูกต้อง 6 เที่ยว 60–80 ม.']]};
 // Manifesto (ไทย) — จากไฟล์ manifesto ใน Drive
-const MANIFESTO=`"ฉันเกิดมาเพื่อไปให้ถึงเส้นชัยของฉัน<br>ทุกก้าวที่เหนื่อยล้า กำลังสร้างคนที่แข็งแกร่งกว่าเดิม<br>ฉันไม่หยุดเพราะระยะทางไกล ฉันเดินหน้าเพราะหัวใจของฉันใหญ่กว่าความกลัว<br><br>ฉันคือคนที่ซ้อม ฉันคือคนที่สู้ ฉันคือคนที่ลุกขึ้นอีกครั้ง<br>และฉันคือคนที่จะจบมาราธอนนี้ด้วยหัวใจที่ภาคภูมิ<br><br>REVEL Mt Charleston ไม่ใช่แค่สนามแข่ง<br>แต่มันคือหลักฐานว่าฉันพาตัวเองไปไกลกว่าที่เคยเชื่อ"`;
+const MANIFESTO_TH=`"ฉันเกิดมาเพื่อไปให้ถึงเส้นชัยของฉัน<br>ทุกก้าวที่เหนื่อยล้า กำลังสร้างคนที่แข็งแกร่งกว่าเดิม<br>ฉันไม่หยุดเพราะระยะทางไกล ฉันเดินหน้าเพราะหัวใจของฉันใหญ่กว่าความกลัว<br><br>ฉันคือคนที่ซ้อม ฉันคือคนที่สู้ ฉันคือคนที่ลุกขึ้นอีกครั้ง<br>และฉันคือคนที่จะจบมาราธอนนี้ด้วยหัวใจที่ภาคภูมิ<br><br>REVEL Mt Charleston ไม่ใช่แค่สนามแข่ง<br>แต่มันคือหลักฐานว่าฉันพาตัวเองไปไกลกว่าที่เคยเชื่อ"`;
+const MANIFESTO_EN=`"I am becoming the person who crosses the finish line.<br>Every mile is shaping my strength. Every breath is teaching me patience.<br>Every step forward is proof that I am capable of more than I once believed.<br><br>I do not need to be perfect. I only need to keep moving.<br>When the road feels long, I trust my training.<br>When doubt gets loud, I remember who I am becoming.<br><br>I am strong enough for the distance. I am brave enough for the challenge.<br>I am disciplined enough to show up. I am worthy of the victory waiting for me.<br><br>I will finish this marathon with courage, gratitude, and a heart full of pride."`;
 
 // ---------- HELPERS ----------
 const $=s=>document.querySelector(s);
@@ -315,22 +379,64 @@ function streakFrom(set){
   return s;
 }
 function todayQuest(){
-  const start=new Date(PROGRAM_START+'T00:00:00Z');
   const now=new Date();now.setUTCHours(0,0,0,0);
-  const diff=Math.floor((now-start)/86400000);
-  const wk=Math.floor(diff/7)+1;
-  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const dn=dayNames[now.getUTCDay()];
-  const wp=PROGRAM[wk];
-  let q;
-  if(wp){
-    if(wp[dn]) q={...wp[dn],kind:'main'};
-    else if(dn==='Tue'||dn==='Sat') q={...wp.opt,kind:'opt'};
-    else q={t:'Rest & Recover',m:'วันพักฟื้น นอนให้พอ ยืดกล้ามเนื้อเบาๆ',time:0,f:'การพักฟื้นสำคัญเท่าการซ้อม ร่างกายแข็งแกร่งขึ้นตอนพักค่ะ',type:'rest',kind:'rest'};
-    return {wk,dn,goal:wp.goal,q};
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  for(let i=0;i<PROGRAM_WEEKS.length;i++){
+    const w=PROGRAM_WEEKS[i]; const sd=new Date(w.start+'T00:00:00Z');
+    const diff=Math.floor((now-sd)/86400000);
+    if(diff>=0&&diff<7){
+      const dn=days[now.getUTCDay()]; const p=w.days[dn];
+      return {wk:w.n,dn,goal:w.goal,q:{t:p.title,m:p.main||'—',f:p.focus||'',type:p.type,time:p.time||0,kind:p.type}};
+    }
   }
-  return {wk,dn,goal:'เฟสถัดไป — รอตารางจากโค้ช',q:{t:'Keep Showing Up',m:'ทำตามจังหวะของสัปดาห์นี้ แล้วส่งผลให้ไมลี่บันทึก',time:0,f:'ตารางเฟสใหม่กำลังมาค่ะ ระหว่างนี้รักษาความสม่ำเสมอไว้',type:'run',kind:'main'}};
+  return {wk:'-',dn:days[new Date().getUTCDay()],goal:'เฟสถัดไป — รอตารางจากโค้ช',q:{t:'Keep Showing Up',m:'ทำตามจังหวะของสัปดาห์นี้ แล้วส่งผลให้ไมลี่บันทึก',f:'ตารางเฟสใหม่กำลังมาค่ะ',type:'run',time:0,kind:'run'}};
 }
+
+const DAYORDER=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const TYPEMETA={run:['🏃','t-run','RUN'],strength:['💪','t-strength','HOME GYM'],walk:['🚶','t-walk','WALK'],rest:['😴','t-rest','REST']};
+function fmtDate(ws,off){const d=new Date(ws+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+off);return d;}
+function shortD(d){return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+function buildProgram(){
+  const tabs=PROGRAM_WEEKS.map((w,i)=>`<button class="wtab ${i===0?'on':''}" id="wtab${i}" onclick="switchWeek(${i})">Week ${w.n}</button>`).join('');
+  const panels=PROGRAM_WEEKS.map((w,i)=>{
+    const rows=DAYORDER.map(dn=>{
+      const p=w.days[dn]; const m=TYPEMETA[p.type];
+      const det=p.type==='rest'?`<div class="wdetail"><div class="wfocus">${p.focus}</div></div>`:
+        `<div class="wdetail">${p.warm?`<div class="row"><span>Warm-up:</span> ${p.warm}</div>`:''}<div class="row"><span>Main:</span> ${p.main}</div>${p.cool?`<div class="row"><span>Cool-down:</span> ${p.cool}</div>`:''}<div class="wfocus">${p.focus}</div></div>`;
+      return `<details class="wday"><summary><span class="dlabel">${dn}</span><span class="wpill ${m[1]}">${m[2]}</span><span class="wt">${p.title}</span>${p.time?`<span style="margin-left:auto;color:var(--dim);font-size:11px">${p.time}'</span>`:''}</summary>${det}</details>`;
+    }).join('');
+    return `<div class="wpanel ${i===0?'on':''}" id="wpanel${i}">
+      <div style="font-size:12px;color:var(--dim);margin-bottom:6px">🎯 ${w.goal} · ${shortD(fmtDate(w.start,0))}–${shortD(fmtDate(w.start,6))}</div>
+      <div class="coachbox"><span class="ic">📣</span><div class="ct"><b>Coach's Pep Talk:</b> ${w.coach}</div></div>
+      ${rows}</div>`;
+  }).join('');
+  return `<h2><span class="dot"></span>Training Program · โปรแกรมรายสัปดาห์</h2><div class="wtabs">${tabs}</div>${panels}`;
+}
+window.switchWeek=function(i){
+  document.querySelectorAll('.wpanel').forEach((p,idx)=>p.classList.toggle('on',idx===i));
+  document.querySelectorAll('.wtab').forEach((bt,idx)=>bt.classList.toggle('on',idx===i));
+};
+function buildCalendar(loggedSet){
+  const todayK=ymd(new Date());
+  let rows='';
+  PROGRAM_WEEKS.forEach((w,wi)=>{
+    let cells='';
+    DAYORDER.forEach((dn,off)=>{
+      const p=w.days[dn]; const m=TYPEMETA[p.type]; const d=fmtDate(w.start,off); const k=ymd(d);
+      cells+=`<div class="cell ${p.type} ${k===todayK?'today':''}" onclick="showCalDay(${wi},'${dn}')">${loggedSet.has(k)?'<span class="chk">✓</span>':''}<span class="demo">${m[0]}</span><span class="dnum">${d.getUTCDate()}</span></div>`;
+    });
+    rows+=`<div style="font-size:10px;color:var(--dim);margin:8px 0 3px">Week ${w.n} · ${shortD(fmtDate(w.start,0))}</div><div class="calrow">${cells}</div>`;
+  });
+  return `<h2><span class="dot"></span>Training Calendar · ปฏิทินซ้อม (แตะดูแต่ละวัน)</h2>
+    <div class="calhead">${DAYORDER.map(d=>`<div>${d}</div>`).join('')}</div>${rows}
+    <div class="callegend"><b>🏃 วิ่ง</b><b>💪 Home Gym</b><b>🚶 เดินฟื้นฟู</b><b>😴 พัก</b><b>✓ ซ้อมแล้ว</b></div>
+    <div class="caldetail" id="caldetail">👆 แตะวันในปฏิทินเพื่อดูรายละเอียดการซ้อมของวันนั้น</div>`;
+}
+window.showCalDay=function(wi,dn){
+  const p=PROGRAM_WEEKS[wi].days[dn]; const m=TYPEMETA[p.type];
+  const el=document.getElementById('caldetail'); if(!el)return;
+  el.innerHTML=`<div style="font-weight:800;margin-bottom:5px">${m[0]} ${dn} · ${p.title} <span class="wpill ${m[1]}" style="margin-left:4px">${m[2]}</span>${p.time?` <span style="color:var(--dim);font-size:11px">· ${p.time} นาที</span>`:''}</div>${p.warm?`<div style="font-size:12px"><span style="color:var(--dim)">Warm-up:</span> ${p.warm}</div>`:''}${p.main?`<div style="font-size:12px"><span style="color:var(--dim)">Main:</span> ${p.main}</div>`:''}${p.cool?`<div style="font-size:12px"><span style="color:var(--dim)">Cool-down:</span> ${p.cool}</div>`:''}<div class="wfocus" style="margin-top:6px">${p.focus}</div>`;
+};
 
 function render(runs,fromSnapshot){
   const ci=loadCheckins();
@@ -381,6 +487,11 @@ function render(runs,fromSnapshot){
     <div class="stat"><div class="v c-gold">${totalKcal.toLocaleString()}</div><div class="k">Calories</div></div>`;
   grid.appendChild(strip);
 
+  // ----- TRAINING PROGRAM -----
+  const pc=document.createElement('div');pc.className='card';pc.style.gridColumn='1/-1';pc.innerHTML=buildProgram();grid.appendChild(pc);
+  // ----- TRAINING CALENDAR -----
+  const calc=document.createElement('div');calc.className='card';calc.style.gridColumn='1/-1';calc.innerHTML=buildCalendar(set);grid.appendChild(calc);
+
   // ----- JOURNEY -----
   const start=new Date(PROGRAM_START+'T00:00:00Z');
   const end=new Date(RACES[1].date+'T00:00:00Z');
@@ -407,10 +518,7 @@ function render(runs,fromSnapshot){
   // ----- FINISH LINE VISION -----
   const fv=document.createElement('div');fv.className='card finishvis';
   fv.innerHTML=`<h2><span class="dot"></span>Finish Line Vision · ภาพเส้นชัยของพี่</h2>
-    <div class="fvwrap">
-      <img src="${IMG_HERO}" alt="REVEL finish line landscape">
-      <img src="${IMG_FINISH}" alt="REVEL finish line portrait">
-    </div>
+    <div class="fvsingle"><img src="${IMG_FINISH}" alt="REVEL Mt Charleston finish line"></div>
     <div class="fvcap"><b>"I do not chase the finish line. I rise into it."</b> — #NayzMiles · REVEL Mt Charleston 2027</div>`;
   grid.appendChild(fv);
 
@@ -461,8 +569,8 @@ function render(runs,fromSnapshot){
     {ic:'📅',t:'Week 1 Done',d:'ครบ 3 วิ่ง',un:wk1Runs>=3}
   ];
   const bc=document.createElement('div');bc.className='card badges';
-  bc.innerHTML=`<h2><span class="dot"></span>Badges ปลดล็อก ${BADGES.filter(b=>b.un).length}/${BADGES.length}</h2>
-    <div class="bgrid">${BADGES.map(b=>`<div class="badge ${b.un?'un':''}"><div class="ic">${b.ic}</div><div class="bt">${b.t}</div><div class="bd">${b.d}</div></div>`).join('')}</div>`;
+  bc.innerHTML=`<h2><span class="dot"></span>Medals · ${BADGES.filter(b=>b.un).length}/${BADGES.length} ปลดล็อก</h2>
+    <div class="medalgrid">${BADGES.map(b=>`<div class="medal ${b.un?'un':''}"><div class="medalwrap"><div class="ribs"></div><div class="disc">${b.un?b.ic:'🔒'}</div></div><div class="nm">${b.t}</div><div class="ds">${b.d}</div></div>`).join('')}</div>`;
   grid.appendChild(bc);
 
   // ----- LOG TABLE -----
@@ -482,7 +590,8 @@ function render(runs,fromSnapshot){
   // ----- MANIFESTO -----
   const man=document.createElement('div');man.className='card';man.style.gridColumn='1/-1';
   man.innerHTML=`<h2><span class="dot"></span>Manifesto · คำปฏิญาณ</h2>
-    <details><summary>เปิดอ่านพลังใจ</summary><div class="mani">${MANIFESTO}</div></details>`;
+    <details open><summary>🇹🇭 ฉบับภาษาไทย</summary><div class="mani">${MANIFESTO_TH}</div></details>
+    <details><summary>🇺🇸 English Version</summary><div class="mani">${MANIFESTO_EN}</div></details>`;
   grid.appendChild(man);
 
   // ----- MILY -----
@@ -527,7 +636,6 @@ function drawCharts(runOnly,all){
     if(!RUNS.length){ render(SNAPSHOT,true); }
     else render(RUNS,false);
   }catch(e){
-    // standalone/offline (เปิดนอก Cowork): แสดง snapshot อย่างเรียบร้อย
     render(SNAPSHOT,false);
     if(window.cowork){
       const er=document.createElement('div');er.className='err';
