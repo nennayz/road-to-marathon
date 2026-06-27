@@ -275,6 +275,22 @@ details[open] summary::before{content:"▾ "}
 .lnk{background:none;border:none;color:var(--dim);font-size:11px;cursor:pointer;text-decoration:underline}
 .fmsg{grid-column:1/-1;font-size:12px;color:var(--gold);min-height:14px}
 @media(max-width:680px){.form{grid-template-columns:1fr}.tbrand{display:none}}
+.modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(5,7,16,.72);backdrop-filter:blur(3px);padding:16px}
+.modal.show{display:flex}
+.modalbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;max-width:440px;width:100%;max-height:86vh;overflow:auto;box-shadow:0 20px 50px -16px #000}
+.modalbox h3{font-size:15px;margin-bottom:12px;color:var(--cyan)}
+.modalbox label{display:flex;flex-direction:column;font-size:11px;color:var(--dim);gap:4px;margin-bottom:10px}
+.modalbox input,.modalbox select,.modalbox textarea{background:#0b1122;border:1px solid var(--line);border-radius:9px;color:var(--txt);padding:9px 10px;font-size:13px;font-family:inherit}
+.modalact{display:flex;align-items:center;gap:14px;margin-top:6px;flex-wrap:wrap}
+.dedit{background:none;border:none;cursor:pointer;font-size:13px;opacity:.65;padding:2px}
+.dedit:hover{opacity:1}
+.wright{margin-left:auto;display:flex;align-items:center;gap:8px}
+.wtime{color:var(--dim);font-size:11px}
+.ovtag{font-size:9px;font-weight:800;color:var(--gold);border:1px solid rgba(245,196,81,.4);border-radius:6px;padding:1px 6px}
+.phint{font-size:11px;color:var(--dim);margin:-2px 0 10px}
+.wtabs{align-items:center}
+.wreset{margin-left:auto;border:1px solid var(--line);background:#0b1122;color:var(--dim);border-radius:999px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer}
+.wreset:hover{color:var(--txt);border-color:var(--cyan)}
 .foot{text-align:center;color:var(--dim);font-size:11px;margin-top:22px}
 .loading{grid-column:1/-1;text-align:center;color:var(--dim);padding:30px;font-size:14px}
 .err{grid-column:1/-1;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.3);color:#ffd5e8;border-radius:12px;padding:12px 14px;font-size:12px}
@@ -296,6 +312,19 @@ canvas{max-height:200px}
   <div class="aprow"><span>📣 เชียร์</span><input type="range" id="volCheer" min="0" max="1" step="0.05" value="0.7" oninput="setCheerVol(this.value)"></div>
 </div>
 
+  <div id="editModal" class="modal">
+    <div class="modalbox">
+      <h3 id="emHead">แก้ไขวันซ้อม</h3>
+      <label>ประเภท<select id="emType"><option value="run">🏃 วิ่ง</option><option value="walk">🚶 เดิน</option><option value="strength">💪 Home Gym</option><option value="rest">😴 พัก</option></select></label>
+      <label>ชื่อกิจกรรม<input id="emTitleI"></label>
+      <label>เวลา (นาที)<input id="emTime" type="number" min="0"></label>
+      <label>Warm-up<input id="emWarm"></label>
+      <label>Main set<input id="emMain"></label>
+      <label>Cool-down<input id="emCool"></label>
+      <label>Focus / โน้ตโค้ช<textarea id="emFocus" rows="2"></textarea></label>
+      <div class="modalact"><button class="qbtn" style="width:auto;padding:10px 20px" onclick="saveDay()">✓ บันทึก</button><button class="lnk" id="emReset" onclick="resetDay()">คืนค่าโค้ชวันนี้</button><button class="lnk" onclick="closeEdit()">ปิด</button></div>
+    </div>
+  </div>
   <div class="toolbar">
     <div class="tbrand">🏃 NayzMiles</div>
     <div class="chips">
@@ -328,7 +357,7 @@ canvas{max-height:200px}
     <div class="loading" id="loadingBox">⏳ กำลังเชื่อม Google Drive NayzMiles แล้วโหลดผลซ้อมของพี่…</div>
   </div>
 
-  <div class="foot">NayzMiles · Road to Marathon (เวอร์ชันมือถือ) · เพิ่ม/บันทึกผลเองได้ในหน้านี้ · ข้อมูลฐานเป็น snapshot</div>
+  <div class="foot">NayzMiles · Road to Marathon (เวอร์ชันมือถือ) · แก้ตาราง/เพิ่มผลเองได้ในหน้านี้ · ข้อมูลฐานเป็น snapshot</div>
 </div>
 
 <script>
@@ -358,8 +387,8 @@ const PROGRAM_WEEKS=[
    Tue:{type:'strength',title:'Home Strength (optional)',time:20,main:'Squat to Chair · Glute Bridge · Calf Raise · Dead Bug · Side Plank',focus:'ทำช้า คุมฟอร์ม ไม่ต้องหนัก เตรียมร่างให้พร้อมวิ่ง'},
    Wed:{type:'run',title:'Easy Run-Walk Control',time:40,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 8 นาที / เดิน 2 นาที × 3 รอบ',cool:'เดินช้า 5 นาที',focus:'ฝึกคุมตัวเอง อย่าเร่งตอนรู้สึกดี จบแบบยังสนุก'},
    Thu:{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:'การพักฟื้นสำคัญเท่าการซ้อม นอนให้พอ ยืดกล้ามเนื้อเบาๆ'},
-   Fri:{type:'run',title:'Long Easy Run-Walk',time:41,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 10 นาที / เดิน 2 นาที × 3 รอบ',cool:'เดินช้า 5 นาที',focus:'วันสร้างฐานหัวใจ จบแบบ Strong จบแบบพรุ่งนี้ไม่พัง'},
-   Sat:{type:'strength',title:'Home Strength (optional)',time:20,main:'Squat to Chair · Glute Bridge · Calf Raise · Dead Bug · Side Plank',focus:'เลือกทำวันอังคารหรือเสาร์ ทำเฉพาะวันที่ร่างกายสดชื่น'},
+   Fri:{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:'สัปดาห์นี้ย้าย Long Run ไปวันเสาร์ — วันศุกร์พักเต็มที่ ยืดกล้ามเนื้อเบาๆ'},
+   Sat:{type:'run',title:'Long Easy Run-Walk',time:41,warm:'เดินเร็ว 5 นาที',main:'วิ่ง Easy 10 นาที / เดิน 2 นาที × 3 รอบ',cool:'เดินช้า 5 นาที',focus:'วันสร้างฐานหัวใจ จบแบบ Strong จบแบบพรุ่งนี้ไม่พัง (ย้ายจากศุกร์มาเสาร์)'},
    Sun:{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:'พักเต็มที่ เตรียมพร้อมสำหรับสัปดาห์ถัดไป'}
   }},
  {n:2,start:'2026-06-29',goal:'วิ่งนิ่งขึ้น · สร้างความมั่นใจ',
@@ -483,6 +512,15 @@ function streakFrom(set){
   while(set.has(ymd(d))){s++;d.setUTCDate(d.getUTCDate()-1);}
   return s;
 }
+function getPlanOv(){try{return JSON.parse(localStorage.getItem('nayz_plan_ov')||'{}');}catch(e){return {};}}
+function planDay(wi,dn){const base=(PROGRAM_WEEKS[wi]&&PROGRAM_WEEKS[wi].days[dn])||{type:'rest',title:'Rest & Recover',main:'พักผ่อน / ฟื้นฟู',focus:''};const ov=getPlanOv()[wi+'-'+dn];return ov?Object.assign({},base,ov):base;}
+function dayOverridden(wi,dn){return !!getPlanOv()[wi+'-'+dn];}
+let _editKey=null;
+window.editDay=function(wi,dn){_editKey=[wi,dn];const p=planDay(wi,dn);const g=id=>document.getElementById(id);g('emHead').textContent='แก้ไข '+dn+' · Week '+PROGRAM_WEEKS[wi].n;g('emType').value=p.type||'run';g('emTitleI').value=p.title||'';g('emTime').value=p.time||'';g('emWarm').value=p.warm||'';g('emMain').value=p.main||'';g('emCool').value=p.cool||'';g('emFocus').value=p.focus||'';g('emReset').style.display=dayOverridden(wi,dn)?'inline':'none';document.getElementById('editModal').classList.add('show');};
+window.saveDay=function(){if(!_editKey)return;const g=id=>document.getElementById(id);const ov=getPlanOv();ov[_editKey[0]+'-'+_editKey[1]]={type:g('emType').value,title:g('emTitleI').value||'(ไม่มีชื่อ)',time:+g('emTime').value||0,warm:g('emWarm').value,main:g('emMain').value,cool:g('emCool').value,focus:g('emFocus').value};try{localStorage.setItem('nayz_plan_ov',JSON.stringify(ov));}catch(e){}closeEdit();show();};
+window.resetDay=function(){if(!_editKey)return;const ov=getPlanOv();delete ov[_editKey[0]+'-'+_editKey[1]];try{localStorage.setItem('nayz_plan_ov',JSON.stringify(ov));}catch(e){}closeEdit();show();};
+window.resetAllPlan=function(){try{localStorage.removeItem('nayz_plan_ov');}catch(e){}show();};
+window.closeEdit=function(){document.getElementById('editModal').classList.remove('show');};
 function todayQuest(){
   const now=new Date();now.setUTCHours(0,0,0,0);
   const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -490,7 +528,7 @@ function todayQuest(){
     const w=PROGRAM_WEEKS[i]; const sd=new Date(w.start+'T00:00:00Z');
     const diff=Math.floor((now-sd)/86400000);
     if(diff>=0&&diff<7){
-      const dn=days[now.getUTCDay()]; const p=w.days[dn];
+      const dn=days[now.getUTCDay()]; const p=planDay(i,dn);
       return {wk:w.n,dn,goal:w.goal,q:{t:p.title,m:p.main||'—',f:p.focus||'',type:p.type,time:p.time||0,kind:p.type}};
     }
   }
@@ -505,17 +543,17 @@ function buildProgram(){
   const tabs=PROGRAM_WEEKS.map((w,i)=>`<button class="wtab ${i===0?'on':''}" id="wtab${i}" onclick="switchWeek(${i})">Week ${w.n}</button>`).join('');
   const panels=PROGRAM_WEEKS.map((w,i)=>{
     const rows=DAYORDER.map((dn,off)=>{
-      const p=w.days[dn]; const m=TYPEMETA[p.type]; const dd=fmtDate(w.start,off);
+      const p=planDay(i,dn); const m=TYPEMETA[p.type]; const dd=fmtDate(w.start,off);
       const det=p.type==='rest'?`<div class="wdetail"><div class="wfocus">${p.focus}</div></div>`:
         `<div class="wdetail">${p.warm?`<div class="row"><span>Warm-up:</span> ${p.warm}</div>`:''}<div class="row"><span>Main:</span> ${p.main}</div>${p.cool?`<div class="row"><span>Cool-down:</span> ${p.cool}</div>`:''}<div class="wfocus">${p.focus}</div></div>`;
-      return `<details class="wday"><summary><span class="dlabel"><b>${dn}</b><span class="dsub">${dd.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit',timeZone:'UTC'})}</span></span><span class="wpill ${m[1]}">${m[2]}</span><span class="wt">${p.title}</span>${p.time?`<span style="margin-left:auto;color:var(--dim);font-size:11px">${p.time}'</span>`:''}</summary>${det}</details>`;
+      return `<details class="wday"><summary><span class="dlabel"><b>${dn}</b><span class="dsub">${dd.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit',timeZone:'UTC'})}</span></span><span class="wpill ${m[1]}">${m[2]}</span><span class="wt">${p.title}</span><span class="wright">${p.time?`<span class="wtime">${p.time}'</span>`:''}${dayOverridden(i,dn)?'<span class="ovtag">แก้แล้ว</span>':''}<button class="dedit" title="แก้ไขวันนี้" onclick="event.stopPropagation();event.preventDefault();editDay(${i},'${dn}')">✏️</button></span></summary>${det}</details>`;
     }).join('');
     return `<div class="wpanel ${i===0?'on':''}" id="wpanel${i}">
       <div style="font-size:12px;color:var(--dim);margin-bottom:6px">🎯 ${w.goal} · ${shortD(fmtDate(w.start,0))}–${shortD(fmtDate(w.start,6))}</div>
       <div class="coachbox"><span class="ic">📣</span><div class="ct"><b>Coach's Pep Talk:</b> ${w.coach}</div></div>
       ${rows}</div>`;
   }).join('');
-  return `<h2><span class="dot"></span>Training Program · โปรแกรมรายสัปดาห์</h2><div class="wtabs">${tabs}</div>${panels}`;
+  return `<h2><span class="dot"></span>Training Program · โปรแกรมรายสัปดาห์</h2><div class="wtabs">${tabs}<button class="wreset" onclick="resetAllPlan()" title="คืนค่าตารางโค้ช">↺ ค่าโค้ช</button></div><div class="phint">แตะ ✏️ ที่แต่ละวันเพื่อแก้ตารางเอง (เก็บในเครื่อง)</div>${panels}`;
 }
 window.switchWeek=function(i){
   document.querySelectorAll('.wpanel').forEach((p,idx)=>p.classList.toggle('on',idx===i));
@@ -527,7 +565,7 @@ function buildCalendar(loggedSet){
   PROGRAM_WEEKS.forEach((w,wi)=>{
     let cells='';
     DAYORDER.forEach((dn,off)=>{
-      const p=w.days[dn]; const m=TYPEMETA[p.type]; const d=fmtDate(w.start,off); const k=ymd(d);
+      const p=planDay(wi,dn); const m=TYPEMETA[p.type]; const d=fmtDate(w.start,off); const k=ymd(d);
       const hasDiary=window.__DIARY&&window.__DIARY[k];
       cells+=`<div class="cell ${p.type} ${k===todayK?'today':''}" onclick="showCalDay(${wi},'${dn}')">${loggedSet.has(k)?'<span class="chk">✓</span>':''}<span class="demo">${m[0]}</span><span class="dnum">${d.getUTCDate()}</span>${hasDiary?'<span class="diaryd">📖</span>':''}</div>`;
     });
@@ -539,7 +577,7 @@ function buildCalendar(loggedSet){
     <div class="caldetail" id="caldetail">👆 แตะวันในปฏิทินเพื่อดูรายละเอียดการซ้อมของวันนั้น</div>`;
 }
 window.showCalDay=function(wi,dn){
-  const p=PROGRAM_WEEKS[wi].days[dn]; const m=TYPEMETA[p.type];
+  const p=planDay(wi,dn); const m=TYPEMETA[p.type];
   const el=document.getElementById('caldetail'); if(!el)return;
   const dk=ymd(fmtDate(PROGRAM_WEEKS[wi].start,DAYORDER.indexOf(dn)));
   const dn2=window.__DIARY&&window.__DIARY[dk];
