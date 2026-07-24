@@ -357,7 +357,7 @@ canvas{max-height:200px}
     <div class="loading" id="loadingBox">⏳ กำลังเชื่อม Google Drive NayzMiles แล้วโหลดผลซ้อมของพี่…</div>
   </div>
 
-  <div class="foot">NayzMiles · Road to Marathon (เวอร์ชันมือถือ) · แก้ตาราง/เพิ่มผลเองได้ในหน้านี้ · ข้อมูลฐานเป็น snapshot</div>
+  <div class="foot">ดึงข้อมูลสดจาก Google Drive › NayzMiles › Training Log › Run Logs & Screenshots · กด Reload ด้านบนหลังส่งผลวิ่งใหม่</div>
 </div>
 
 <script>
@@ -497,26 +497,46 @@ function saveCheckins(o){try{localStorage.setItem(LS_KEY,JSON.stringify(o));}cat
 // ---------- MAIN ----------
 let RUNS=[];
 async function fetchRuns(){
-  const res=await callTool(T_SEARCH,{query:"parentId = '"+RUN_LOGS_FOLDER+"' and mimeType = 'text/markdown'",pageSize:100});
+  // Search all Drive folders by title (run logs get moved between weekly folders)
+  const res=await callTool(T_SEARCH,{query:"(title contains 'RunResult' or title contains 'WalkResult') and mimeType = 'text/markdown'",pageSize:200});
   const files=(res&&res.files)||[];
-  const mds=files.filter(f=>/markdown/.test(f.mimeType||'')||/Result/i.test(f.title||''));
+  const RX=/^\d{8}-(Run|Walk)Result-Week\d+-Day\d+(\.md)?$/i;
+  const mds=files.filter(f=>RX.test(f.title||''));
   const out=[];
   for(const f of mds){
     try{
       const dl=await callTool(T_DOWNLOAD,{fileId:f.id});
       const txt=dl&&dl.content?b64utf8(dl.content):'';
       const r=parseRun(txt); r.id=f.id; r.title=f.title;
-      if(r.date) out.push(r);
+      if(r.date && r.distKm>0) out.push(r); // skip unparseable table-format logs
     }catch(e){/*skip*/}
   }
   out.sort((a,b)=>a.date-b.date);
   return out;
 }
+// Curated SNAPSHOT is source of truth; append only live runs newer than any curated date.
+function mergeRuns(snap,live){
+  const seen=new Set(snap.map(r=>ymd(r.date)));
+  const extra=(live||[]).filter(r=>!seen.has(ymd(r.date)));
+  return snap.concat(extra).sort((a,b)=>a.date-b.date);
+}
 
-const SNAPSHOT=[ // fallback if Drive unreachable
+const SNAPSHOT=[ // curated source of truth — updated to latest (thru 22 Jul 2026)
  {dateStr:'Saturday 20 June 2026',date:new Date(Date.UTC(2026,5,20)),act:'Outdoor Walk',distKm:5.62,durStr:'1:02:51',hr:138,kcal:505,steps:7423,assign:'Pre-Training Walk',paceSec:671,isRun:false,note:'วันนี้รู้สึกอย่างไร? รู้สึกดีที่ได้ออกมาเริ่มเดินวันแรก!\nอะไรทำได้ดี? คุมการเดินไม่ให้หยุด เดินต่อเนื่องได้ตลอด 1 ชั่วโมงกว่า\nอะไรที่ยากที่สุด? พอถึงจุดหนึ่งเริ่มเหนื่อยนิดหน่อย แต่ยังไม่ได้วิ่ง แค่ลองเดินดู'},
  {dateStr:'Monday 22 June 2026',date:new Date(Date.UTC(2026,5,22)),act:'Outdoor Run',distKm:3.10,durStr:'00:35:27',hr:157,kcal:250,steps:5132,assign:'Week 1 — Day 1',paceSec:687,isRun:true,note:'วันนี้รู้สึกอย่างไร? ดีใจที่ตื่นมาวิ่งตอนเช้าได้ ต้องสู้กับการตื่นมาก เพราะวันแรกที่ตื่นเช้ากับอากาศที่ไม่คุ้นเคย\nอะไรทำได้ดี? keep ยกขาให้อยู่ใน pace วิ่งเหยาะๆ ตลอด มีช่วงหนึ่งรู้สึก flow\nอะไรที่ยากที่สุด? ไม่ใช่การวิ่ง แต่เป็นตอนตื่นเช้า อยากใช้ความเร็วมากกว่านี้ แต่กังวลความเหนื่อย จึงไม่ฝืนเกินไป'},
- {dateStr:'Wednesday 24 June 2026',date:new Date(Date.UTC(2026,5,24)),act:'Running',distKm:3.71,durStr:'00:40:47',hr:153,kcal:298,steps:5814,assign:'Week 1 — Day 2',paceSec:659,isRun:true,note:'วันนี้รู้สึกอย่างไร? ร่างกายงอแงนิดนึง ตื่นกลางดึกแล้วนอนต่อไม่หลับ ตื่นสายไปชั่วโมงกว่า มีอาการตึงขาหลังวิ่งช่วงแรก\nอะไรทำได้ดี? วิ่งต่อเนื่องไม่หักโหม ผ่อนช่วงที่ตึง แล้ววิ่งจนจบ\nอะไรที่ยากที่สุด? เหนื่อยและตึงน่อง กังวลว่าจะวิ่งต่อไหวไหม แต่ประคองไปจนจบ session'}
+ {dateStr:'Wednesday 24 June 2026',date:new Date(Date.UTC(2026,5,24)),act:'Running',distKm:3.71,durStr:'00:40:47',hr:153,kcal:298,steps:5814,assign:'Week 1 — Day 2',paceSec:659,isRun:true,note:'วันนี้รู้สึกอย่างไร? ร่างกายงอแงนิดนึง ตื่นกลางดึกแล้วนอนต่อไม่หลับ ตื่นสายไปชั่วโมงกว่า มีอาการตึงขาหลังวิ่งช่วงแรก\nอะไรทำได้ดี? วิ่งต่อเนื่องไม่หักโหม ผ่อนช่วงที่ตึง แล้ววิ่งจนจบ\nอะไรที่ยากที่สุด? เหนื่อยและตึงน่อง กังวลว่าจะวิ่งต่อไหวไหม แต่ประคองไปจนจบ session'},
+ {dateStr:'Saturday 27 June 2026',date:new Date(Date.UTC(2026,5,27)),act:'Outdoor Run',distKm:4.10,durStr:'00:46:15',hr:159,kcal:331,steps:6627,assign:'Week 1 — Day 3 (Long Run แรก!)',paceSec:677,isRun:true,note:'วันนี้รู้สึกอย่างไร? ดีใจมากที่ทำ long run แรกในชีวิตสำเร็จ เริ่มจากเลือกนอนเร็วเพื่อตื่นเช้าตามเป้า ถือเป็นชัยชนะเหนือตัวเองตั้งแต่ก่อนออกวิ่ง\nอะไรทำได้ดี? Keep ตาม plan ได้ดี วิ่งในโซนที่กำหนด ก้าวขาสม่ำเสมอ คุมหัวใจไม่ให้เหนื่อยเกิน\nอะไรที่ยากที่สุด? รอบที่สามขาเริ่มตึง แต่เลือกผ่อนแทนหยุด keep ไปข้างหน้าโดยไม่เร่ง'},
+ {dateStr:'Monday 29 June 2026',date:new Date(Date.UTC(2026,5,29)),act:'Running',distKm:3.03,durStr:'00:35:31',hr:161,kcal:245,steps:4987,assign:'Week 2 — Day 1',paceSec:704,isRun:true,note:'วันนี้รู้สึกอย่างไร? ฝนตก/พายุเข้าช่วงสาย เลยเปลี่ยนมาวิ่งเย็น อากาศร้อนกว่าเช้า โดยรวมพอใจ แต่อยากทำรอบขาให้ดีกว่านี้\nอะไรทำได้ดี? วิ่งไม่หยุดเดินครบ 25 นาทีตามโจทย์ ถึงแม้เหนื่อยช่วงกลาง\nอะไรที่ยากที่สุด? พยายามยืดรอบขาให้ยาวขึ้นโดยที่ heart rate ไม่พุ่ง'},
+ {dateStr:'Wednesday 1 July 2026',date:new Date(Date.UTC(2026,6,1)),act:'Running',distKm:3.93,durStr:'00:44:22',hr:163,kcal:319,steps:6393,assign:'Week 2 — Day 2',paceSec:677,isRun:true,note:'วันนี้รู้สึกอย่างไร? ตื่นสาย เพื่อนชวนไปช่วยงาน กะไม่ได้วิ่ง แต่ตัดสินใจวิ่งกลับบ้านตอนสามทุ่มทั้งที่ไม่พร้อม (กางเกงขายาว รองเท้าผ้าใบ) ทำภารกิจสำเร็จ ดีใจ!\nอะไรทำได้ดี? พยายามก้าวขายาวขึ้น มี HR เตือนเป็นระยะแต่ยังไหว ประคองจนจบรอบ\nอะไรที่ยากที่สุด? ช่วงต้นวิ่งเร็วไปหน่อย พาร์ทสองเลยตึงนิดๆ เลยลด pace ลงมาให้วิ่งได้สบาย'},
+ {dateStr:'Friday 3 July 2026',date:new Date(Date.UTC(2026,6,3)),act:'Running',distKm:4.82,durStr:'00:56:08',hr:150,kcal:390,steps:7815,assign:'Week 2 — Day 3 (ระยะไกลสุด)',paceSec:699,isRun:true,note:'วันนี้รู้สึกอย่างไร? ดีใจที่เอาชนะตัวเอง วิ่งได้ระยะยาวที่สุดตั้งแต่ซ้อมมา (4.82 km)\nอะไรทำได้ดี? วิ่งได้ flow ขึ้น\nอะไรที่ยากที่สุด? ยังกังวลเรื่องความฟิต — แค่เดินเร็ว HR ก็ขึ้น Zone 2-3 พอวิ่งแตะ Zone 4-5 ตลอด'},
+ {dateStr:'Monday 6 July 2026',date:new Date(Date.UTC(2026,6,6)),act:'Outdoor Run',distKm:3.30,durStr:'00:41:11',hr:140,kcal:271,steps:5053,assign:'Week 3 — Day 1 (HR Control Run-Walk)',paceSec:749,isRun:true,note:'วันนี้รู้สึกอย่างไร? ดีใจมากที่ได้ออกมาวิ่ง เป็นวันที่วิ่งสบายที่สุดเพราะไม่กังวลเรื่อง pace เน้นคุมหัวใจตามเป้า\nอะไรทำได้ดี? ไม่เร่งตัวเอง หัวใจเตือนปุ๊บก็ลดความเร็วลง รักษาระดับหัวใจได้ตามเป้าหมาย\nอะไรที่ยากที่สุด? ความล้าสะสมจากทริป Fourth of July ต่างเมือง แต่ก็ยัง keep ออกไปวิ่งจนได้'},
+ {dateStr:'Wednesday 8 July 2026',date:new Date(Date.UTC(2026,6,8)),act:'Running',distKm:3.20,durStr:'00:40:31',hr:140,kcal:260,steps:5044,assign:'Week 3 — Day 2 (Easy Aerobic Control)',paceSec:760,isRun:true,note:'วันนี้รู้สึกอย่างไร? ฝนตกตอนเช้าเลยมาวิ่งเย็น ยังโฟกัสที่หัวใจ ทำให้วิ่งไม่เหนื่อยหอบ เน้นวิ่งต่อเนื่อง\nอะไรทำได้ดี? วิ่งสบายขึ้น ร่างกายไม่หอบ ไม่หมดแรงหลังวิ่ง\nอะไรที่ยากที่สุด? ยังอยากก้าวให้ไวขึ้น แต่เชื่อในโปรแกรมและสัญญาณหัวใจ จำกัดความเร็วให้อยู่ใน pace ที่ถูกต้อง'},
+ {dateStr:'Saturday 11 July 2026',date:new Date(Date.UTC(2026,6,11)),act:'Outdoor Run-Walk',distKm:4.44,durStr:'00:55:36',hr:129,kcal:359,steps:6778,assign:'Week 3 — Day 3 (Long HR Fitness · เลื่อนจากถอนฟัน)',paceSec:752,isRun:true,note:'วันนี้รู้สึกอย่างไร? เลื่อนมาจากเมื่อวานเพราะไปผ่าถอนฟันมา หมอให้งดออกกำลังกาย วันนี้ทำเซสชันจบตามแผน 55 นาทีได้สำเร็จ\nอะไรทำได้ดี? คุมหัวใจได้ดีขึ้น รอบสองรักษาจังหวะก้าวเท่าเดิมแต่นาฬิกาบอกว่ายังเพิ่มได้เพราะ HR ต่ำกว่าเป้า ร่างกายเริ่มรับงานได้ดีขึ้น\nอะไรที่ยากที่สุด? วันนี้ไม่มีช่วงไหนยากเป็นพิเศษ โฟกัสทำภารกิจให้จบโดยไม่ฝืนร่างกาย'},
+ {dateStr:'Monday 13 July 2026',date:new Date(Date.UTC(2026,6,13)),act:'Outdoor Run-Walk',distKm:3.44,durStr:'00:44:35',hr:133,kcal:281,steps:5554,assign:'Week 4 — Day 1 (Controlled Run-Walk)',paceSec:778,isRun:true,note:'วันนี้รู้สึกอย่างไร? เช้ามีเรียนออนไลน์เลยย้ายมาวิ่งเย็น อากาศร้อนกว่าปกติ แต่ตั้งใจทำเซสชันให้จบตามเป้า\nอะไรทำได้ดี? คุมหัวใจได้ดี รักษาความตั้งใจจนจบแม้ต้องเปลี่ยนเวลาและอากาศร้อน\nอะไรที่ยากที่สุด? ตึงน่องตั้งแต่รอบแรก ต้องประคองไม่เร่ง อาการค่อยๆ ดีขึ้นช่วงกลาง บวกกับอากาศร้อนขึ้นชัดเจน'},
+ {dateStr:'Thursday 16 July 2026',date:new Date(Date.UTC(2026,6,16)),act:'Outdoor Run-Walk',distKm:3.86,durStr:'00:50:30',hr:135,kcal:314,steps:6271,assign:'Week 4 — Day 2 (HR Reset · เลื่อนจากฝน)',paceSec:785,isRun:true,note:'วันนี้รู้สึกอย่างไร? เมื่อวานอากาศไม่ดีเลยงด วันนี้ดีขึ้นจึงออกไปทำตามแผน 45 นาที\nอะไรทำได้ดี? รักษาระดับหัวใจตามเป้า ไม่เร่งเกินไป และเพิ่มการยืดเหยียดมากขึ้น\nอะไรที่ยากที่สุด? สภาพอากาศยังร้อน (31°C รู้สึกเหมือน 32°C) แต่ตั้งใจทำเซสชันให้จบตามแผน'},
+ {dateStr:'Friday 17 July 2026',date:new Date(Date.UTC(2026,6,17)),act:'Outdoor Run-Walk',distKm:4.50,durStr:'01:00:17',hr:133,kcal:369,steps:7303,assign:'Week 4 — Day 3 (Long Easy HR Fitness)',paceSec:804,isRun:true,note:'วันนี้รู้สึกอย่างไร? รู้สึกผ่อนคลาย สบาย ไม่กดดันในการวิ่ง\nอะไรทำได้ดี? ทำตามคำแนะนำโค้ช ไม่เร่งตั้งแต่แรก ประคองระดับหัวใจจนจบ 60 นาที\nอะไรที่ยากที่สุด? การตื่นเช้าออกมาวิ่ง แม้อยากวิ่งเช้ามากกว่า แต่ยังทำได้ไม่ดีในจุดนี้'},
+ {dateStr:'Monday 20 July 2026',date:new Date(Date.UTC(2026,6,20)),act:'Outdoor Run-Walk',distKm:3.73,durStr:'00:50:54',hr:133,kcal:307,steps:6239,assign:'Week 5 — Day 13 (Controlled Aerobic · คุม pace ครั้งแรก)',paceSec:818,isRun:true,note:'วันนี้รู้สึกอย่างไร? วันแรกที่ฝึกคุม pace ให้อยู่ในระยะกำหนด เลยกังวลนิดๆ ว่าจะทำได้ไหม\nอะไรทำได้ดี? พยายามไม่เร่ง ฟังการเตือนจากนาฬิกา ปรับความเร็วให้อยู่ในช่วงตลอด\nอะไรที่ยากที่สุด? ยังจับจังหวะ pace ไม่ได้ วิ่งช้านาฬิกาเตือนช้าไป เร่งขึ้นก็เตือนเร็วไป ยังคุมช่วงเป้าหมายได้ไม่ดีนัก'},
+ {dateStr:'Wednesday 22 July 2026',date:new Date(Date.UTC(2026,6,22)),act:'Run-Walk',distKm:4.46,durStr:'01:01:54',hr:129,kcal:370,steps:7555,assign:'Week 6 — Day 14 (HR Reset Run-Walk)',paceSec:833,isRun:true,note:'วันนี้รู้สึกอย่างไร? มีเพื่อนออกไปเดินด้วย เลยผ่อนคลาย ได้เปลี่ยนเส้นทางใหม่ๆ ประคองตามจังหวะของเรา\nอะไรทำได้ดี? ไม่เร่ง วิ่งในระดับที่ทำได้เรื่อยๆ ไม่เหนื่อยมาก\nอะไรที่ยากที่สุด? ยังพยายามหาจังหวะ pace ที่เป็นโจทย์ แต่ไม่โฟกัสจนกังวลเกินไป'}
 ];
 
 function computeXP(runs){let xp=0;runs.forEach(r=>{xp+=Math.round(r.distKm*100)+(r.isRun?20:0);});MANUAL_LOG.forEach(x=>xp+=x.xp||0);userManual().forEach(x=>xp+=x.xp||0);return xp;}
@@ -935,7 +955,7 @@ function getUserSessions(){try{return JSON.parse(localStorage.getItem('nayz_sess
 function userRunObjs(){return getUserSessions().filter(x=>x.type==='run'||x.type==='walk').map(x=>({date:new Date(x.date+'T00:00:00Z'),distKm:+x.distKm||0,durStr:x.durStr||'',paceSec:x.paceSec||null,hr:x.hr||0,kcal:x.kcal||0,isRun:x.type==='run',assign:x.label||(x.type==='run'?'My Run':'My Walk'),act:x.type==='run'?'Running':'Walk',note:x.note||'',user:true}));}
 function userManual(){return getUserSessions().filter(x=>x.type==='strength'||x.type==='rest').map(x=>({date:x.date,type:x.type,title:x.label||(x.type==='strength'?'Home Strength':'Rest'),xp:x.type==='strength'?60:0,note:x.note||''}));}
 function show(){const merged=BASE.concat(userRunObjs()).sort((a,b)=>a.date-b.date);window.__lastLoad=new Date();render(merged,IS_SNAP);updateUpdatedLabel();}
-window.doRefresh=async function(){const b=document.getElementById('btnRefresh');if(b)b.classList.add('spin');try{if(window.cowork){const r=await fetchRuns();if(r&&r.length){BASE=r;IS_SNAP=false;}}}catch(e){}show();if(b)setTimeout(()=>b.classList.remove('spin'),600);};
+window.doRefresh=async function(){const b=document.getElementById('btnRefresh');if(b)b.classList.add('spin');try{if(window.cowork){const r=await fetchRuns();BASE=mergeRuns(SNAPSHOT,r);IS_SNAP=false;}}catch(e){}show();if(b)setTimeout(()=>b.classList.remove('spin'),600);};
 window.jump=function(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
 function updateUpdatedLabel(){const el=document.getElementById('updLbl');if(!el)return;const t=window.__lastLoad||new Date();const hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0');el.textContent=(IS_SNAP?'snapshot':'sync')+' '+hh+':'+mm;}
 window.addSession=function(){const g=id=>document.getElementById(id);const date=g('fDate').value,type=g('fType').value,dist=parseFloat(g('fDist').value)||0,durRaw=(g('fDur').value||'').trim(),note=(g('fNote').value||'').trim(),msg=g('fMsg');
@@ -955,11 +975,14 @@ function restoreAudioUI(){try{const mv=localStorage.getItem('nayz_vol');if(mv!==
 (async function init(){
   try{
     RUNS=await fetchRuns();
-    BASE = RUNS.length?RUNS:SNAPSHOT; IS_SNAP=!RUNS.length;
+    BASE = mergeRuns(SNAPSHOT,RUNS); IS_SNAP=false;
     show();
     onReady();
   }catch(e){
     BASE=SNAPSHOT; IS_SNAP=true; show();
+    const er=document.createElement('div');er.className='err';
+    er.textContent='เชื่อม Google Drive ไม่สำเร็จ — กำลังแสดงข้อมูลสำรอง';
+    $('#grid').prepend(er);
     onReady();
   }
 })();
